@@ -18,8 +18,6 @@ function playRound(playerChoice, computerChoice) {
   playerChoice = playerChoice.toLowerCase();
 
   if (playerChoice === computerChoice) {
-    playerScore += 1;
-    computerScore += 1;
     return "Round is a tie";
   } else if (playerChoice == "rock" && computerChoice == "scissors") {
     playerScore += 1;
@@ -44,37 +42,55 @@ function playRound(playerChoice, computerChoice) {
   }
 
 }
-function game() {
-  let playerChoice;
-  let computerChoice;
-
-  if (roundCount > 5) {
-    (playerScore == computerScore) ? console.log("The game was a tie!") : (playerScore > computerScore) ? console.log("Player wins the game!") : console.log("Computer wins the game!");
-
-  } else {
-    console.log(`Round: ${roundCount}`);
-    playerChoice = prompt("rock, paper, or scissors?");
-
-    if (playerChoice) { //if there is any truthy input from prompt
-      console.log(`You chose ${playerChoice}`);
-      computerChoice = getComputerChoice();
-      console.log(playRound(playerChoice, computerChoice));
-
-    } else { //run if there is falsey input from prompt
-      console.log("Game ended.");
-      return;
-    }
-    roundCount += 1;
-    console.log(`Player Score: ${playerScore} \nComputer Score: ${computerScore}`);
-    game();
-
-  }
-
-
-
-}
-let roundCount = 1;
 let playerScore = 0;
 let computerScore = 0;
-game();
+let gameOver = false;
+const rockPaperScissors = document.querySelectorAll(".rpsBtn");
+// Add event listener for click on each game selection
+rockPaperScissors.forEach((selection) => {
+  selection.addEventListener("click", game);
+});
 
+function game() {
+  let playerChoice = "";
+  let computerChoice = "";
+  playerChoice = this.textContent;
+  computerChoice = getComputerChoice();
+  let announcement = playRound(playerChoice, computerChoice);
+  updateScore(announcement);
+  if (gameOver) {
+    const rockBtn = document.querySelector(".rockBtn");
+    const paperBtn = document.querySelector(".paperBtn");
+    const scissorsBtn = document.querySelector(".scissorsBtn");
+    rockBtn.disabled = true;
+    paperBtn.disabled = true;
+    scissorsBtn.disabled = true;
+    return;
+  }
+}
+function updateScore(announcement) {
+  const paragraphScore = document.querySelector(".score");
+  const paragraphAnnouncement = document.querySelector(".announcement");
+
+  paragraphScore.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
+
+  if (playerScore == 5) {
+    paragraphAnnouncement.classList.add("winner");
+    announcement = "Player wins the game!";
+    gameOver = true;
+  } else if (computerScore == 5) {
+    paragraphAnnouncement.classList.add("winner");
+    announcement = "Computer wins the game!";
+    gameOver = true;
+  }
+  paragraphAnnouncement.textContent = announcement;
+
+}
+
+/*
+create variable for each button
+event listenrs for each button
+ on click, player selection = the button's text value
+ and run the playround() function
+
+*/
